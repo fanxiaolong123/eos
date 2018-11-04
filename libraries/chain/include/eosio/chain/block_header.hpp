@@ -6,8 +6,8 @@ namespace eosio { namespace chain {
 
    struct block_header
    {
-      block_timestamp_type             timestamp;
-      account_name                     producer;
+      block_timestamp_type             timestamp;   // 时间戳
+      account_name                     producer;  // 见证人的账户
 
       /**
        *  By signing this block this producer is confirming blocks [block_num() - confirmed, blocknum()) 
@@ -20,20 +20,20 @@ namespace eosio { namespace chain {
        */
       uint16_t                         confirmed = 1;  
 
-      block_id_type                    previous;
+      block_id_type                    previous;       // 上一个区块的哈希
 
-      checksum256_type                 transaction_mroot; /// mroot of cycles_summary
-      checksum256_type                 action_mroot; /// mroot of all delivered action receipts
+      checksum256_type                 transaction_mroot; /// mroot of cycles_summary    // 交易默克尔根，transaction 包含很多 action
+      checksum256_type                 action_mroot; /// mroot of all delivered action receipts    // action 默克尔根，eos 里 action 是最小动作单位
 
 
       /** The producer schedule version that should validate this block, this is used to
        * indicate that the prior block which included new_producers->version has been marked
        * irreversible and that it the new producer schedule takes effect this block.
        */
-      uint32_t                          schedule_version = 0;
-      optional<producer_schedule_type>  new_producers;
+      uint32_t                          schedule_version = 0;  // 见证人排序的编号。见证人的排序是见证人自己商议决定的
+      optional<producer_schedule_type>  new_producers;      // 下一个见证人。用「optional」库表示可以为空，意思是还是当前见证人出块。
       extensions_type                   header_extensions;
-
+ 
 
       digest_type       digest()const;
       block_id_type     id() const;
@@ -42,9 +42,9 @@ namespace eosio { namespace chain {
    };
 
 
-   struct signed_block_header : public block_header
+   struct signed_block_header : public block_header    // 签名的区块头。不可篡改。签名表示认可区块头里的全部数据
    {
-      signature_type    producer_signature;
+      signature_type    producer_signature;     // 见证人的签名
    };
 
    struct header_confirmation {
